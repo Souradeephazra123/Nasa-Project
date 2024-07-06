@@ -1,17 +1,17 @@
 import {
   getAllLaunches,
-  AddLaunch,
+  scheduleFlightLaunch,
   existsLaunchId,
   AbortLaunchId,
 } from "../../models/launch.model.js";
 
-function httpGetAllLaunches(req, res) {
+async function httpGetAllLaunches(req, res) {
   //.values gives iterable values in the map, now have to array them
   //so creating an array by Array.from   from lasunches,value()
-  return res.status(200).json(getAllLaunches());
+  return res.status(200).json(await getAllLaunches());
 }
 
-function httpAddNewLaunch(req, res) {
+async function httpAddNewLaunch(req, res) {
   const launch = req.body;
   //validaton of input body
 
@@ -56,24 +56,37 @@ function httpAddNewLaunch(req, res) {
     });
   }
 
-  AddLaunch(launch);
+  await scheduleFlightLaunch(launch);
+  // console.log(launch);
   return res.status(201).json(launch);
 }
 
-function httpAbortLaunch(req, res) {
+async function httpAbortLaunch(req, res) {
   //remember to convert this into id because it comes string as default type
   const launchId = Number(req.params.id);
   //if launchid doesnot exist
 
-  if (!existsLaunchId(launchId)) {
+  const existLaunch = await existsLaunchId(launchId);
+
+  if (!existLaunch) {
     return res.status(404).json({
       Error: "Launch not found",
     });
   }
 
   //if launch id found
-  const aborted = AbortLaunchId(launchId);
-  return res.status(200).json(aborted);
+  const aborted = await AbortLaunchId(launchId);
+  // console.log(aborted);
+  //if launch id not found
+  if (!aborted) {
+    return res.status(400).json({
+      Error: "Launch could not be aborted",
+    });
+  }
+
+  return res.status(200).json({
+    ok: true,
+  });
 }
 
 export { httpGetAllLaunches, httpAddNewLaunch, httpAbortLaunch };

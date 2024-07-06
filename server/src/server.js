@@ -1,11 +1,17 @@
 import http from "http";
-import {app} from './app.js'
+import { mongoConnect } from "./services/mongo.js";
 
+import { app } from "./app.js";
 
 const PORT = process.env.PORT || 8000;
 
 const server = http.createServer(app);
 
-server.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
-});
+async function startServer() {
+  await mongoConnect();
+
+  server.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
+  });
+}
+startServer();
