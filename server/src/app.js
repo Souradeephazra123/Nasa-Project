@@ -1,10 +1,9 @@
 import express from "express";
 import cors from "cors";
-import { planetRouter } from "./routes/planets/planets.router.js";
 import path from "path";
 import { fileURLToPath } from "url";
 import morgan from "morgan";
-import { launchesRouter } from "./routes/launches/launches.router.js";
+import { api } from "./routes/api.js";
 
 const app = express();
 
@@ -25,7 +24,6 @@ app.use(
   })
 );
 
-
 //logging with morgan , logging all details
 app.use(morgan("combined"));
 
@@ -34,8 +32,8 @@ app.use(express.json());
 
 app.use(express.static(path.join(__dirname, "public")));
 
-app.use("/planets", planetRouter);
-app.use("/launches", launchesRouter);
+//version api
+app.use("/v1", api);
 
 app.get("/*", (req, res) => {
   res.sendFile(path.join(__dirname, "public/index.html"));

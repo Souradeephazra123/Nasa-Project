@@ -3,12 +3,17 @@ import {
   scheduleFlightLaunch,
   existsLaunchId,
   AbortLaunchId,
+  
 } from "../../models/launch.model.js";
+import { getPagination } from "../../services/query.js"; 
 
 async function httpGetAllLaunches(req, res) {
+  console.log(req.query);
+
+  const {skip,limit} =getPagination(req.query);
   //.values gives iterable values in the map, now have to array them
   //so creating an array by Array.from   from lasunches,value()
-  return res.status(200).json(await getAllLaunches());
+  return res.status(200).json(await getAllLaunches(skip,limit));
 }
 
 async function httpAddNewLaunch(req, res) {

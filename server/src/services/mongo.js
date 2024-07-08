@@ -1,6 +1,12 @@
 import mongoose from "mongoose";
+//previuously it iwas not working connecting to mongodb , so  i have added here dotenv
+import dotenv from 'dotenv'
+dotenv.config();
 
-const MONGO_URI = `mongodb+srv://bubun:bubun@cluster0.isvfuvh.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`;
+if (!process.env.MONGO_URI) {
+  throw new Error("MONGO_URI is not defined in the environment variables");
+}
+const MONGO_URL = process.env.MONGO_URI;
 
 mongoose.connection.once("open", () => {
   console.log("Connected to Database");
@@ -11,7 +17,7 @@ mongoose.connection.on("error", (err) => {
 });
 
 async function mongoConnect() {
-  await mongoose.connect(MONGO_URI);
+  await mongoose.connect(MONGO_URL);
 }
 
 export { mongoConnect };
